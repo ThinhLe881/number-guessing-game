@@ -45,6 +45,7 @@ newRound:
     call srand
     add rsp, 8
     call rand
+    mov rdx, 0
     div rbx
     mov r14, rdx                            ; the target number is the remainder (rdx)
 
@@ -66,17 +67,31 @@ guess:
     cmp r14, [input]
     je right
 
-wrong:
-    mov rdi, wrongMes
+    cmp r15, 0
+    je outOfGuess
+
+    cmp r14, [input]
+    jl wrongDown
+
+wrongUp:
+    mov rdi, wrongMesUp
     mov rsi, r15
     mov rax, 0
     push rbx
     call printf
     pop rbx
 
-    cmp r15, 0
-    je end
+    jmp nextGuess
 
+wrongDown:
+    mov rdi, wrongMesDown
+    mov rsi, r15
+    mov rax, 0
+    push rbx
+    call printf
+    pop rbx
+
+nextGuess:
     dec r15
     jmp guess
 
@@ -91,13 +106,14 @@ right:
     inc r15
     jmp newRound
 
-end:
+outOfGuess:
     mov rdi, loseMes
     mov rax, 0
     push rbx
     call printf
     pop rbx
 
+end:
     mov rdi, endMes
     mov rax, 0
     push rbx
@@ -116,7 +132,8 @@ section .data
     inputFormat db "%d", 0
 
     rightMes db "Correct! The number is %d", 0ah, 0dh, 0ah, 0dh, 0
-    wrongMes db "Incorrect! Try again (%d tries remaining)", 0ah, 0dh, 0
+    wrongMesUp db "Incorrect! Try a larger number (%d tries remaining)", 0ah, 0dh, 0
+    wrongMesDown db "Incorrect! Try a smaller number (%d tries remaining)", 0ah, 0dh, 0
 
     loseMes db "Incorrect! Out of guesses :(", 0ah ,0dh, 0ah, 0dh, 0
     endMes db "Game Over!!!", 0ah, 0dh, 0
