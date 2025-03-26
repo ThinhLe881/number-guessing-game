@@ -1,1 +1,3 @@
-# Number Guessing Game - Thinh Le
+# Guess The Number
+
+A console guessing game in ASM.
